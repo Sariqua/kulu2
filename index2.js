@@ -29,6 +29,6 @@
 var items=document.gwtElementBYClassName('list-group-item');
 console.log(items);
 console.log(items[1]);
-items[1].textContent='Hello 2';
+items[1].textContent='Hello 3';
 items[1].style.fontweight ='bold';
-items[1].style.backgroundcolor='yellow';
+items[1].style.backgroundcolor='green';

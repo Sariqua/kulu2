@@ -1,81 +1,73 @@
-const posts =[
+function saveToLocalStorage(event) {
+    event.preventDefault();
+    const name = event.target.username.value;
+    const email = event.target.emailId.value;
+    const cate = event.target.category.value;
+    
+    const obj = {
+        name,
+        email,
+         cate
+    }
+    localStorage.setItem(obj.email, JSON.stringify(obj))
+    showNewUserOnScreen(obj)
+}
 
-    {   title:'Post one', body: 'This is post one', createdAt: new Date().getTime()},
+window.addEventListener("DOMContentLoaded", () => {
+    const localStorageObj = localStorage;
+    const localstoragekeys  = Object.keys(localStorageObj)
 
-    {   title:'Post two', body: 'This is post two', createdAt: new Date().getTime() }
+    for(var i =0; i< localstoragekeys.length; i++){
+        const key = localstoragekeys[i]
+        const userDetailsString = localStorageObj[key];
+        const userDetailsObj = JSON.parse(userDetailsString);
+        showNewUserOnScreen(userDetailsObj)
+    }
+})
 
-];
-
-let intervalId =0;
-
-
-
-function getPosts()
-
-{
-
-    clearInterval(intervalId);
-
-    intervalId = setInterval(()=>
-
-    {
-
-        let output = '';
-
-        for(let i = 0; i<posts.length; i++)
-
-    {
-
-    output += '<li>${posts[i].title} - last updated ${(new Date().getTime{} - posts[i].createdAt)} </li> '
-
+function showNewUserOnScreen(user){
+    document.getElementById('email').value = '';
+    document.getElementById('username').value = '';
+    document.getElementById('category').value = '';
+    
+    if(localStorage.getItem(user.email) !== null){
+        removeUserFromScreen(user.email)
     }
 
-    console.log('timer runnig id =', intervalId)
+    const parentNode = document.getElementById('listOfUsers');
+    const childHTML = `<li id=${user.email}> ${user.name} - ${user.email}
+                            <button onclick=deleteUser('${user.email}')> Delete Expense </button>
+                            <button onclick=editUserDetails('${user.email}','${user.name}','${user.cate}')>Edit Expense </button>
+                         </li>`
 
-    document.body.innerHTML = output;
+    parentNode.innerHTML = parentNode.innerHTML + childHTML;
+}
 
-    } ,1000)
+//Edit User
 
+function editUserDetails(emailId, name, cate){
 
+    document.getElementById('email').value = emailId;
+    document.getElementById('username').value = name;
+    document.getElementById('category').value = cate;
+    
+
+    deleteUser(emailId)
+ }
+
+// deleteUser('abc@gmail.com')
+
+function deleteUser(emailId){
+    console.log(emailId)
+    localStorage.removeItem(emailId);
+    removeUserFromScreen(emailId);
 
 }
 
-function createPost( post){
-
-    return new Promise( (resolve , reject) => {
-        setTimeout(() => {
-
-            post.push({...post,createdAt: new Date().getTime()});
-            
-            const error = false;
-            
-            if(!error){
-                resolve();
-            }
-            else
-            {
-                reject('Error : something went wrong');
-            }
-     
-
-     
-         }, 2000);
-
-    });
-
-   
-
+function removeUserFromScreen(emailId){
+    const parentNode = document.getElementById('listOfUsers');
+    const childNodeToBeDeleted = document.getElementById(emailId);
+    if(childNodeToBeDeleted) {
+        parentNode.removeChild(childNodeToBeDeleted)
+    }
 }
-createPost({title: 'Post Three' , body: 'This is post three'})
-.then(() => {
-    getPosts()
-    deletePost().then(()=>{
-        
-    })
-})
-.catch(err => console.log(err));
-
-const promise1 = Promise.resolve('Hello World');
-const promise2 = 10;
-const promise3 = new Promise((resolve, reject) => setTimeout(resolve, 2000, 'GoodBye'));
-Promise.all({promise1, promise2, promise3}).then(values => console.log(values));
